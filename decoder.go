@@ -11,9 +11,9 @@ import (
 // Decoder decodes bytes data to a block timestamp and data points.
 type Decoder struct {
 	rd              *bitstream.BitReader
-	headerTimestamp uint32
-	storedTimestamp uint32
-	storedDelta     uint32
+	headerTimestamp uint64
+	storedTimestamp uint64
+	storedDelta     uint64
 
 	storedLeadingZeros  uint8
 	storedTrailingZeros uint8
@@ -28,12 +28,12 @@ func NewDecoder(r io.Reader) *Decoder {
 }
 
 // DecodeHeader decodes header to the block timestamp.
-func (d *Decoder) DecodeHeader() (t0 uint32, err error) {
-	timestamp, err := d.rd.ReadBits(32)
+func (d *Decoder) DecodeHeader() (t0 uint64, err error) {
+	timestamp, err := d.rd.ReadBits(64)
 	if err != nil {
 		return 0, err
 	}
-	d.headerTimestamp = uint32(timestamp)
+	d.headerTimestamp = timestamp
 	return d.headerTimestamp, nil
 }
 
@@ -60,7 +60,7 @@ func (d *Decoder) readFirst() (p Point, err error) {
 		return Point{}, err
 	}
 
-	d.storedDelta = uint32(delta)
+	d.storedDelta = delta
 	d.storedTimestamp = d.headerTimestamp + d.storedDelta
 	d.storedValueBits = valueBits
 
@@ -87,7 +87,7 @@ func (d *Decoder) readPoint() (p Point, err error) {
 	}, err
 }
 
-func (d *Decoder) readTmestamp() (t uint32, err error) {
+func (d *Decoder) readTmestamp() (t uint64, err error) {
 	nBits, err := d.bitsToRead()
 	if err != nil {
 		return 0, err
@@ -100,8 +100,8 @@ func (d *Decoder) readTmestamp() (t uint32, err error) {
 			return 0, err
 		}
 
-		if nBits == 32 {
-			if deltaDeltaBits == 0xFFFFFFFF {
+		if nBits == 64 {
+			if deltaDeltaBits == 0xFFFFFFFFFFFFFFFF {
 				return 0, io.EOF
 			}
 
@@ -116,7 +116,7 @@ func (d *Decoder) readTmestamp() (t uint32, err error) {
 		}
 	}
 
-	d.storedDelta += uint32(deltaDelta)
+	d.storedDelta += uint64(deltaDelta)
 	d.storedTimestamp += d.storedDelta
 
 	return d.storedTimestamp, nil
@@ -190,7 +190,7 @@ func (d *Decoder) bitsToRead() (n uint, err error) {
 	case 0x0E:
 		return 12, nil
 	case 0x0F:
-		return 32, nil
+		return 64, nil
 	default:
 		return 0, errors.New("invalid bit header for bit length to read")
 	}

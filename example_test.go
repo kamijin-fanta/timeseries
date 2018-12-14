@@ -7,22 +7,22 @@ import (
 	"io"
 	"time"
 
-	"github.com/hnakamur/timeseries"
+	"github.com/kamijin-fanta/timeseries"
 )
 
 func ExampleMarshal() {
-	t0 := uint32(time.Date(2015, 3, 24, 2, 0, 0, 0, time.UTC).Unix())
+	t0 := uint64(time.Date(2015, 3, 24, 2, 0, 0, 0, time.UTC).UnixNano())
 	points := []timeseries.Point{
 		{
-			Timestamp: uint32(time.Date(2015, 3, 24, 2, 1, 2, 0, time.UTC).Unix()),
+			Timestamp: uint64(time.Date(2015, 3, 24, 2, 1, 2, 0, time.UTC).UnixNano()),
 			Value:     12.0,
 		},
 		{
-			Timestamp: uint32(time.Date(2015, 3, 24, 2, 2, 2, 0, time.UTC).Unix()),
+			Timestamp: uint64(time.Date(2015, 3, 24, 2, 2, 2, 0, time.UTC).UnixNano()),
 			Value:     12.0,
 		},
 		{
-			Timestamp: uint32(time.Date(2015, 3, 24, 2, 3, 2, 0, time.UTC).Unix()),
+			Timestamp: uint64(time.Date(2015, 3, 24, 2, 3, 2, 0, time.UTC).UnixNano()),
 			Value:     24.0,
 		},
 	}
@@ -34,11 +34,11 @@ func ExampleMarshal() {
 	}
 	fmt.Println(hex.EncodeToString(buf))
 
-	// Output: 5510c52000f900a0000000000002fc6b07ffffffffe0
+	// Output: 13ce4ca430cb400039bdf3b00100a0000000000003ffffffffe2329b000d60fffffffffffffffffc
 }
 
 func ExampleUnmarshal() {
-	input, err := hex.DecodeString("5510c52000f900a0000000000002fc6b07ffffffffe0")
+	input, err := hex.DecodeString("13ce4ca430cb400039bdf3b00100a0000000000003ffffffffe2329b000d60fffffffffffffffffc")
 	if err != nil {
 		fmt.Printf("failed to decode hex string: err=%+v\n", err)
 		return
@@ -49,9 +49,9 @@ func ExampleUnmarshal() {
 		fmt.Printf("failed to unmarshal time series: err=%+v\n", err)
 		return
 	}
-	fmt.Printf("block timestamp=%v\n", time.Unix(int64(t0), 0).UTC())
+	fmt.Printf("block timestamp=%v\n", time.Unix(int64(t0/1000000000), 0).UTC())
 	for _, p := range points {
-		fmt.Printf("timestamp=%v, value=%f\n", time.Unix(int64(p.Timestamp), 0).UTC(), p.Value)
+		fmt.Printf("timestamp=%v, value=%f\n", time.Unix(int64(p.Timestamp/1000000000), 0).UTC(), p.Value)
 	}
 
 	// Output:
@@ -62,18 +62,18 @@ func ExampleUnmarshal() {
 }
 
 func ExampleEncoder() {
-	t0 := uint32(time.Date(2015, 3, 24, 2, 0, 0, 0, time.UTC).Unix())
+	t0 := uint64(time.Date(2015, 3, 24, 2, 0, 0, 0, time.UTC).UnixNano())
 	points := []timeseries.Point{
 		{
-			Timestamp: uint32(time.Date(2015, 3, 24, 2, 1, 2, 0, time.UTC).Unix()),
+			Timestamp: uint64(time.Date(2015, 3, 24, 2, 1, 2, 0, time.UTC).UnixNano()),
 			Value:     12.0,
 		},
 		{
-			Timestamp: uint32(time.Date(2015, 3, 24, 2, 2, 2, 0, time.UTC).Unix()),
+			Timestamp: uint64(time.Date(2015, 3, 24, 2, 2, 2, 0, time.UTC).UnixNano()),
 			Value:     12.0,
 		},
 		{
-			Timestamp: uint32(time.Date(2015, 3, 24, 2, 3, 2, 0, time.UTC).Unix()),
+			Timestamp: uint64(time.Date(2015, 3, 24, 2, 3, 2, 0, time.UTC).UnixNano()),
 			Value:     24.0,
 		},
 	}
@@ -102,11 +102,11 @@ func ExampleEncoder() {
 
 	fmt.Println(hex.EncodeToString(b.Bytes()))
 
-	// Output: 5510c52000f900a0000000000002fc6b07ffffffffe0
+	// Output: 13ce4ca430cb400039bdf3b00100a0000000000003ffffffffe2329b000d60fffffffffffffffffc
 }
 
 func ExampleDecoder() {
-	input, err := hex.DecodeString("5510c52000f900a0000000000002fc6b07ffffffffe0")
+	input, err := hex.DecodeString("13ce4ca430cb400039bdf3b00100a0000000000003ffffffffe2329b000d60fffffffffffffffffc")
 	if err != nil {
 		fmt.Printf("failed to decode hex string: err=%+v\n", err)
 		return
@@ -133,9 +133,9 @@ func ExampleDecoder() {
 		points = append(points, p)
 	}
 
-	fmt.Printf("block timestamp=%v\n", time.Unix(int64(t0), 0).UTC())
+	fmt.Printf("block timestamp=%v\n", time.Unix(int64(t0/1000000000), 0).UTC())
 	for _, p := range points {
-		fmt.Printf("timestamp=%v, value=%f\n", time.Unix(int64(p.Timestamp), 0).UTC(), p.Value)
+		fmt.Printf("timestamp=%v, value=%f\n", time.Unix(int64(p.Timestamp/1000000000), 0).UTC(), p.Value)
 	}
 
 	// Output:

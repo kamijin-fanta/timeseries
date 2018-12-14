@@ -1,22 +1,21 @@
 package timeseries
 
 import (
+	"github.com/dgryski/go-bitstream"
 	"io"
 	"math"
-
-	"github.com/dgryski/go-bitstream"
 )
 
 // The first time stamp delta is sized at 14 bits, because that size is enough to span a bit more than 4 hours (16,384 seconds), If one chose a Gorilla block larger than 4 hours, this size would increase.
-const nBitsFirstDelta = 14
+const nBitsFirstDelta = 38
 
 // Encoder encodes time series data in similar way to Facebook Gorilla
 // in-memory time series database.
 type Encoder struct {
 	wr              *bitstream.BitWriter
-	headerTimestamp uint32
-	storedTimestamp uint32
-	storedDelta     uint32
+	headerTimestamp uint64
+	storedTimestamp uint64
+	storedDelta     uint64
 
 	storedLeadingZeros  uint8
 	storedTrailingZeros uint8
@@ -32,8 +31,8 @@ func NewEncoder(w io.Writer) *Encoder {
 }
 
 // EncodeHeader encodes the block timestamp to the header bits.
-func (e *Encoder) EncodeHeader(t0 uint32) error {
-	err := e.wr.WriteBits(uint64(t0), 32)
+func (e *Encoder) EncodeHeader(t0 uint64) error {
+	err := e.wr.WriteBits(t0, 64)
 	if err != nil {
 		return err
 	}
@@ -67,7 +66,7 @@ func (e *Encoder) Finish() error {
 		if err != nil {
 			return err
 		}
-		err = e.wr.WriteBits(0xFFFFFFFF, 32)
+		err = e.wr.WriteBits(0xFFFFFFFFFFFFFFFF, 64)
 		if err != nil {
 			return err
 		}
@@ -103,7 +102,7 @@ func (e *Encoder) writePoint(p Point) error {
 	return e.writeValueXor(p.Value)
 }
 
-func (e *Encoder) writeTimestampDeltaDelta(timestamp uint32) error {
+func (e *Encoder) writeTimestampDeltaDelta(timestamp uint64) error {
 	delta := timestamp - e.storedTimestamp
 	deltaDelta := int64(delta) - int64(e.storedDelta)
 	e.storedTimestamp = timestamp
@@ -147,7 +146,7 @@ func (e *Encoder) writeTimestampDeltaDelta(timestamp uint32) error {
 		if err != nil {
 			return err
 		}
-		err = writeInt64Bits(e.wr, deltaDelta, 32)
+		err = writeInt64Bits(e.wr, deltaDelta, 64)
 		if err != nil {
 			return err
 		}

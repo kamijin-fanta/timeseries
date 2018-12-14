@@ -5,65 +5,65 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hnakamur/timeseries"
+	"github.com/kamijin-fanta/timeseries"
 )
 
 func TestMarshal(t *testing.T) {
 	testCases := []struct {
-		t0     uint32
+		t0     uint64
 		points []timeseries.Point
 		want   string
 	}{
 		{
-			t0: uint32(time.Date(2015, 3, 24, 2, 0, 0, 0, time.UTC).Unix()),
+			t0: uint64(time.Date(2015, 3, 24, 2, 0, 0, 0, time.UTC).UnixNano()),
 			points: []timeseries.Point{
 				{
-					Timestamp: uint32(time.Date(2015, 3, 24, 2, 1, 2, 0, time.UTC).Unix()),
+					Timestamp: uint64(time.Date(2015, 3, 24, 2, 1, 2, 0, time.UTC).UnixNano()),
 					Value:     12.0,
 				},
 				{
-					Timestamp: uint32(time.Date(2015, 3, 24, 2, 2, 2, 0, time.UTC).Unix()),
+					Timestamp: uint64(time.Date(2015, 3, 24, 2, 2, 2, 0, time.UTC).UnixNano()),
 					Value:     12.0,
 				},
 				{
-					Timestamp: uint32(time.Date(2015, 3, 24, 2, 3, 2, 0, time.UTC).Unix()),
+					Timestamp: uint64(time.Date(2015, 3, 24, 2, 3, 2, 0, time.UTC).UnixNano()),
 					Value:     24.0,
 				},
 			},
-			want: "5510c52000f900a0000000000002fc6b07ffffffffe0",
+			want: "13ce4ca430cb400039bdf3b00100a0000000000003ffffffffe2329b000d60fffffffffffffffffc",
 		},
 		{
-			t0:     uint32(time.Date(2015, 3, 24, 2, 0, 0, 0, time.UTC).Unix()),
+			t0:     uint64(time.Date(2015, 3, 24, 2, 0, 0, 0, time.UTC).UnixNano()),
 			points: []timeseries.Point{},
-			want:   "5510c520fffc0000000000000000",
+			want:   "13ce4ca430cb4000fffffffffc0000000000000000",
 		},
 		{
-			t0: uint32(time.Date(2015, 3, 24, 2, 0, 0, 0, time.UTC).Unix()),
+			t0: uint64(time.Date(2015, 3, 24, 2, 0, 0, 0, time.UTC).UnixNano()),
 			points: []timeseries.Point{
 				{
-					Timestamp: uint32(time.Date(2015, 3, 24, 2, 1, 2, 0, time.UTC).Unix()),
+					Timestamp: uint64(time.Date(2015, 3, 24, 2, 1, 2, 0, time.UTC).UnixNano()),
 					Value:     12.0,
 				},
 			},
-			want: "5510c52000f900a0000000000003ffffffffc0",
+			want: "13ce4ca430cb400039bdf3b00100a0000000000003ffffffffffffffffc0",
 		},
 		{
-			t0: uint32(time.Date(2015, 3, 24, 2, 0, 0, 0, time.UTC).Unix()),
+			t0: uint64(time.Date(2015, 3, 24, 2, 0, 0, 0, time.UTC).UnixNano()),
 			points: []timeseries.Point{
 				{
-					Timestamp: uint32(time.Date(2015, 3, 24, 2, 1, 2, 0, time.UTC).Unix()),
+					Timestamp: uint64(time.Date(2015, 3, 24, 2, 1, 2, 0, time.UTC).UnixNano()),
 					Value:     12.0,
 				},
 				{
-					Timestamp: uint32(time.Date(2015, 3, 24, 2, 2, 2, 0, time.UTC).Unix()),
+					Timestamp: uint64(time.Date(2015, 3, 24, 2, 2, 2, 0, time.UTC).UnixNano()),
 					Value:     12.5,
 				},
 				{
-					Timestamp: uint32(time.Date(2015, 3, 24, 2, 3, 2, 0, time.UTC).Unix()),
+					Timestamp: uint64(time.Date(2015, 3, 24, 2, 3, 2, 0, time.UTC).UnixNano()),
 					Value:     -24.2,
 				},
 			},
-			want: "5510c52000f900a0000000000002fdbc1b0010022666666666667ffffffffe",
+			want: "13ce4ca430cb400039bdf3b00100a0000000000003ffffffffe2329b00378360020044cccccccccccfffffffffffffffffc0",
 		},
 	}
 

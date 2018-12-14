@@ -6,62 +6,62 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hnakamur/timeseries"
+	"github.com/kamijin-fanta/timeseries"
 )
 
 func TestUnmarshal(t *testing.T) {
 	testCases := []struct {
 		input      string
-		wantT0     uint32
+		wantT0     uint64
 		wantPoints []timeseries.Point
 	}{
 		{
-			input:  "5510c52000f900a0000000000002fc6b07ffffffffe0",
-			wantT0: uint32(time.Date(2015, 3, 24, 2, 0, 0, 0, time.UTC).Unix()),
+			input:  "13ce4ca430cb400039bdf3b00100a0000000000003ffffffffe2329b000d60fffffffffffffffffc",
+			wantT0: uint64(time.Date(2015, 3, 24, 2, 0, 0, 0, time.UTC).UnixNano()),
 			wantPoints: []timeseries.Point{
 				{
-					Timestamp: uint32(time.Date(2015, 3, 24, 2, 1, 2, 0, time.UTC).Unix()),
+					Timestamp: uint64(time.Date(2015, 3, 24, 2, 1, 2, 0, time.UTC).UnixNano()),
 					Value:     12.0,
 				},
 				{
-					Timestamp: uint32(time.Date(2015, 3, 24, 2, 2, 2, 0, time.UTC).Unix()),
+					Timestamp: uint64(time.Date(2015, 3, 24, 2, 2, 2, 0, time.UTC).UnixNano()),
 					Value:     12.0,
 				},
 				{
-					Timestamp: uint32(time.Date(2015, 3, 24, 2, 3, 2, 0, time.UTC).Unix()),
+					Timestamp: uint64(time.Date(2015, 3, 24, 2, 3, 2, 0, time.UTC).UnixNano()),
 					Value:     24.0,
 				},
 			},
 		},
 		{
-			input:      "5510c520fffc0000000000000000",
-			wantT0:     uint32(time.Date(2015, 3, 24, 2, 0, 0, 0, time.UTC).Unix()),
+			input:      "13ce4ca430cb4000fffffffffc0000000000000000",
+			wantT0:     uint64(time.Date(2015, 3, 24, 2, 0, 0, 0, time.UTC).UnixNano()),
 			wantPoints: nil,
 		},
 		{
-			input:  "5510c52000f900a0000000000003ffffffffc0",
-			wantT0: uint32(time.Date(2015, 3, 24, 2, 0, 0, 0, time.UTC).Unix()),
+			input:  "13ce4ca430cb400039bdf3b00100a0000000000003ffffffffffffffffc0",
+			wantT0: uint64(time.Date(2015, 3, 24, 2, 0, 0, 0, time.UTC).UnixNano()),
 			wantPoints: []timeseries.Point{
 				{
-					Timestamp: uint32(time.Date(2015, 3, 24, 2, 1, 2, 0, time.UTC).Unix()),
+					Timestamp: uint64(time.Date(2015, 3, 24, 2, 1, 2, 0, time.UTC).UnixNano()),
 					Value:     12.0,
 				},
 			},
 		},
 		{
-			input:  "5510c52000f900a0000000000002fdbc1b0010022666666666667ffffffffe",
-			wantT0: uint32(time.Date(2015, 3, 24, 2, 0, 0, 0, time.UTC).Unix()),
+			input:  "13ce4ca430cb400039bdf3b00100a0000000000003ffffffffe2329b00378360020044cccccccccccfffffffffffffffffc0",
+			wantT0: uint64(time.Date(2015, 3, 24, 2, 0, 0, 0, time.UTC).UnixNano()),
 			wantPoints: []timeseries.Point{
 				{
-					Timestamp: uint32(time.Date(2015, 3, 24, 2, 1, 2, 0, time.UTC).Unix()),
+					Timestamp: uint64(time.Date(2015, 3, 24, 2, 1, 2, 0, time.UTC).UnixNano()),
 					Value:     12.0,
 				},
 				{
-					Timestamp: uint32(time.Date(2015, 3, 24, 2, 2, 2, 0, time.UTC).Unix()),
+					Timestamp: uint64(time.Date(2015, 3, 24, 2, 2, 2, 0, time.UTC).UnixNano()),
 					Value:     12.5,
 				},
 				{
-					Timestamp: uint32(time.Date(2015, 3, 24, 2, 3, 2, 0, time.UTC).Unix()),
+					Timestamp: uint64(time.Date(2015, 3, 24, 2, 3, 2, 0, time.UTC).UnixNano()),
 					Value:     -24.2,
 				},
 			},

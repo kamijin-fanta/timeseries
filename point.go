@@ -11,14 +11,14 @@ type Point struct {
 	// Timestamp represents the seconds since 1970-01-01 00:00:00 +0000 UTC.
 	// The max value is 2106-02-07 06:28:15 +0000 UTC.
 	// You can verify the max value at https://play.golang.org/p/XgHveabiUd
-	Timestamp uint32
+	Timestamp uint64
 
 	// Value represents the data point value.
 	Value float64
 }
 
 // Marshal encodes a block timestamp and data points to bytes.
-func Marshal(t0 uint32, points []Point) ([]byte, error) {
+func Marshal(t0 uint64, points []Point) ([]byte, error) {
 	var b bytes.Buffer
 	enc := NewEncoder(&b)
 	err := enc.EncodeHeader(t0)
@@ -42,7 +42,7 @@ func Marshal(t0 uint32, points []Point) ([]byte, error) {
 }
 
 // Unmarshal decodes bytes to a block timestamp and data points.
-func Unmarshal(data []byte) (t0 uint32, points []Point, err error) {
+func Unmarshal(data []byte) (t0 uint64, points []Point, err error) {
 	b := bytes.NewBuffer(data)
 	dec := NewDecoder(b)
 
